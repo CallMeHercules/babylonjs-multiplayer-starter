@@ -1,6 +1,5 @@
-import path from "path";
 import http from "http";
-import express, { Express } from "express";
+import { Express } from "express";
 import socketio from "socket.io";
 import { Logger } from "./Logger";
 import { ClientSocket } from "./ClientSocket";
@@ -38,7 +37,7 @@ export class Server {
     }
 
     private listenStatic(): void {
-        this._http.listen(8080, "127.0.0.1");
+        this._http.listen(8079, "127.0.0.1");
     }
 
     private listenWebsocket(): void {

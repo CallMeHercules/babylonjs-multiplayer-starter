@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs');
+const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const {
     CleanWebpackPlugin
@@ -14,7 +15,11 @@ module.exports = {
         filename: 'js/babylonBundle.js',
     },
     resolve: {
-        extensions: ['.ts', '.js']
+        extensions: ['.ts', '.js'],
+        fallback: {
+            fs: false,
+            path: false 
+          }
     },
     module: {
         rules: [{
@@ -29,23 +34,33 @@ module.exports = {
             {
                 test: /\.(png|jpg|gif|env|glb|stl)$/i,
                 use: [{
-                    loader: 'url-loader',
+                    loader: 'file-loader',
                     options: {
                         limit: 8192,
+                        name: "[name].[contenthash].[ext]",
                     },
                 }, ],
             }
         ]
     },
+    // plugins: [
+    //     new CleanWebpackPlugin(),
+    //     new HtmlWebpackPlugin({
+    //         inject: true,
+    //         template: path.resolve(appDirectory, "public/index.html"),
+    //     }),
+    // ],
     plugins: [
         new CleanWebpackPlugin(),
         new HtmlWebpackPlugin({
-            inject: true,
-            template: path.resolve(appDirectory, "public/index.html"),
+            template: path.join(__dirname, "public/index.html")
         }),
+        new webpack.ProvidePlugin({
+            Ammo: 'ammo.js'
+        })
     ],
-    // Just for ammo
-    node: {
-        fs: 'empty'
-    }
+    // // Just for ammo
+    // node: {
+    //     fs: 'empty'
+    // }
 }

@@ -1,8 +1,8 @@
-import { Vector2, Vector3, Mesh, Scene } from "@babylonjs/core";
-import { ClientState } from "./State";
-import { MeshManager } from "./MeshManager";
+import { Vector2, Vector3, Sprite, Scene, SpriteManager } from "@babylonjs/core";
+import { ClientState, PLAYER_INITIAL_STATE } from "./State";
+import { CharacterManager } from "./CharacterManager";
 import { KeyboardInputManager } from "./KeyboardInputManager";
-import { PLAYER_INITIAL_STATE } from "./State";
+
 
 const MOVEMENT_SPEED = 0.3;
 
@@ -15,26 +15,35 @@ export interface InputFrame {
 }
 
 export class Player {
-    private readonly _mesh: Mesh;
+    private readonly _sprite: Sprite;
     private _state: ClientState = PLAYER_INITIAL_STATE;
-    private _velocity: Vector3 = new Vector3(0, 0, 0);
-
+    // private _velocity: Vector3 = new Vector3(0, 0, 0);
     constructor(
+        private readonly _id: string,
         private readonly _scene: Scene,
-        private readonly _meshManager: MeshManager,
+        private readonly _characterManager: CharacterManager,
         private readonly _keyboardInputManager: KeyboardInputManager,
+        private readonly _spriteManager: SpriteManager,
         initialState: ClientState = PLAYER_INITIAL_STATE
     ) {
-        this._mesh = this._meshManager.createPlayerMesh("player");
+        this._sprite = this._characterManager.createPlayerSprite(this._id, this._spriteManager);
         this.updateState(initialState);
+        console.log(this._state)
     }
 
     public updateState(newState: ClientState) {
+        if (isNaN(newState.position[0])) { //this should really be imported in the state PLAYER_STATE_INTERFACE
+            // clientState = PLAYER_INITIAL_STATE
+            console.log('still have an error')
+            newState.position[0] = 0;
+            newState.position[1] = 1;
+            newState.position[2] = 0;
+        }
         this._state = newState;
         const [x, y, z] = newState.position;
-        this._mesh.position.x = x;
-        this._mesh.position.y = y;
-        this._mesh.position.z = z;
+        this._sprite.position.x = x;
+        this._sprite.position.y = y;
+        this._sprite.position.z = z;
     }
 
     public get state() {

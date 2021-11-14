@@ -15,7 +15,7 @@ To run the basic scene:
 1. Clone / download this repository
 2. run `npm install` to install the needed dependencies.
 3. run `npm start`
-4. A new window should open in your default browser. if it doesn't, open `http://localhost:8080`
+4. A new window should open in your default browser. if it doesn't, open `http://localhost:8079`
 5. ????
 6. Profit
 
@@ -27,7 +27,7 @@ To debug, open the browser's dev tool. Source maps are ready to be used. In case
 
 ## Loading different examples
 
-The `./src/scenes` directory contains a few examples of scenes that can be loaded. To load a specific scene, add a `?scene=FILENAME` to the URL (i.e. to load the ammo physics demo, use `http://localhost:8080/?scene=physicsWithAmmo`).
+The `./src/scenes` directory contains a few examples of scenes that can be loaded. To load a specific scene, add a `?scene=FILENAME` to the URL (i.e. to load the ammo physics demo, use `http://localhost:8079/?scene=physicsWithAmmo`).
 
 More and more scenes will be slowly added.
 

@@ -1,7 +1,8 @@
+import { Scene, SpriteManager } from "@babylonjs/core";
 import { ClientState, GameState, GAME_INITIAL_STATE } from "./State";
 import { ServerConnection } from "./ServerConnection";
 import { NetworkPlayer } from "./NetworkPlayer";
-import { MeshManager } from "./MeshManager";
+import { CharacterManager } from "./CharacterManager";
 import { Player } from "./Player";
 
 export class Game {
@@ -10,14 +11,16 @@ export class Game {
 
     constructor(
         private readonly _serverConnection: ServerConnection,
-        private readonly _meshManager: MeshManager,
-        private readonly _player: Player
+        private readonly _characterManager: CharacterManager,
+        private readonly _player: Player,
+        private readonly _scene: Scene,
+        private readonly _spriteManager: SpriteManager,
     ) {
         this._gameState = GAME_INITIAL_STATE;
         GAME_INITIAL_STATE.players.forEach(({ id, state }) =>
             this._networkPlayers.set(
                 id,
-                new NetworkPlayer(id, state, this._meshManager)
+                new NetworkPlayer(id, state, this._characterManager, this._scene, this._spriteManager)
             )
         );
         console.log(
@@ -38,7 +41,6 @@ export class Game {
     }
 
     private handleUpdatedGameState(newState: GameState) {
-        console.log(newState.players.length);
         if (newState.players.length > this._gameState.players.length) {
             this.instantiateNewPlayers(
                 newState.players,
@@ -70,7 +72,7 @@ export class Game {
             if (!oldPlayersIDs.includes(id)) {
                 this._networkPlayers.set(
                     id,
-                    new NetworkPlayer(id, state, this._meshManager)
+                    new NetworkPlayer(id, state, this._characterManager, this._scene, this._spriteManager)
                 );
             }
         });

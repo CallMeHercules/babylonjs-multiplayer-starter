@@ -4,7 +4,6 @@ import {
     ArcRotateCamera,
     Vector3,
     HemisphericLight,
-    SphereBuilder,
     GroundBuilder,
     StandardMaterial,
 } from "@babylonjs/core";

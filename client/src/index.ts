@@ -1,11 +1,13 @@
 import * as io from "socket.io-client";
 import { Engine } from "@babylonjs/core/Engines/engine";
+import { SpriteManager } from "@babylonjs/core";
 import { getSceneModuleWithName } from "./createScene";
 import { ServerConnection } from "./ServerConnection";
 import { Game } from "./Game";
-import { MeshManager } from "./MeshManager";
+import { CharacterManager } from "./CharacterManager";
 import { KeyboardInputManager } from "./KeyboardInputManager";
 import { Player } from "./Player";
+import { PLAYER_INITIAL_STATE } from "./State";
 
 const getModuleToLoad = (): string | undefined => {
     // ATM using location.search
@@ -40,18 +42,20 @@ export const babylonInit = async (): Promise<void> => {
     window.addEventListener("resize", function () {
         engine.resize();
     });
-
-    const meshManager = new MeshManager(scene);
+    
+    const characterManager = new CharacterManager(scene);
     const keyboardInputManager = new KeyboardInputManager(scene);
-    const serverConnection = new ServerConnection(io("http://localhost:8080"));
-    const player = new Player(scene, meshManager, keyboardInputManager);
-    const game = new Game(serverConnection, meshManager, player);
+    const spriteManager = new SpriteManager("playerManager", './test.png', 100, {width:150, height:193.9}, scene);
+    const serverConnection = new ServerConnection(io("http://localhost:8079"));
+    console.log("create new player")
+    const player = new Player("player", scene, characterManager, keyboardInputManager, spriteManager, PLAYER_INITIAL_STATE);
+    const game = new Game(serverConnection, characterManager, player, scene, spriteManager);
 
     const update = () => {
         // Update game
         game.update();
     };
-
+    console.log('sending state')
     setInterval(() => game.sendClientState());
 
     scene.onBeforeRenderObservable.add(() => update());

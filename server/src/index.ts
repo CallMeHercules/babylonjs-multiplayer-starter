@@ -1,11 +1,10 @@
 import cors from 'cors';
 import express from 'express';
 import http from 'http';
-import socketio from 'socket.io';
 import { Server } from './Server';
 import { Logger } from './Logger';
 
-const PORT = 8080;
+const PORT = 8079;
 
 const app = express();
 app.use(cors({

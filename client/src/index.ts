@@ -8,6 +8,7 @@ import { CharacterManager } from "./CharacterManager";
 import { KeyboardInputManager } from "./KeyboardInputManager";
 import { Player } from "./Player";
 import { PLAYER_INITIAL_STATE } from "./State";
+import sprite from './sprites/test.png'
 
 const getModuleToLoad = (): string | undefined => {
     // ATM using location.search
@@ -45,7 +46,7 @@ export const babylonInit = async (): Promise<void> => {
     
     const characterManager = new CharacterManager(scene);
     const keyboardInputManager = new KeyboardInputManager(scene);
-    const spriteManager = new SpriteManager("playerManager", './test.png', 100, {width:150, height:193.9}, scene);
+    const spriteManager = new SpriteManager("playerManager", sprite, 100, {width:150, height:193.9}, scene);
     const serverConnection = new ServerConnection(io("http://localhost:8079"));
     console.log("create new player")
     const player = new Player("player", scene, characterManager, keyboardInputManager, spriteManager, PLAYER_INITIAL_STATE);

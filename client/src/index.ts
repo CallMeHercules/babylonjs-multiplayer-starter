@@ -10,6 +10,7 @@ import { Player } from "./Player";
 import { PLAYER_INITIAL_STATE } from "./State";
 import sprite from './sprites/test.png'
 
+
 const getModuleToLoad = (): string | undefined => {
     // ATM using location.search
     if (!location.search) {
@@ -33,9 +34,10 @@ export const babylonInit = async (): Promise<void> => {
 
     // Create the scene
     const scene = await createSceneModule.createScene(engine, canvas);
-
     // Register a render loop to repeatedly render the scene
+    let divFps = document.getElementById("fps") as HTMLDivElement;
     engine.runRenderLoop(function () {
+        divFps.innerHTML = engine.getFps().toFixed() + " fps";
         scene.render();
     });
 
@@ -44,9 +46,16 @@ export const babylonInit = async (): Promise<void> => {
         engine.resize();
     });
     
-    const characterManager = new CharacterManager(scene);
+    const characterManager = new CharacterManager();
     const keyboardInputManager = new KeyboardInputManager(scene);
-    const spriteManager = new SpriteManager("playerManager", sprite, 100, {width:150, height:193.9}, scene);
+    const MAX_SAFE_SPRITE_COUNT = 100; //largest known value for SpriteManager without slowdown of fps
+     
+    // while (true) {
+        // console.log(MAX_SAFE_SPRITE_COUNT);
+        // MAX_SAFE_SPRITE_COUNT = MAX_SAFE_SPRITE_COUNT+100000;
+    const spriteManager = new SpriteManager("playerManager"+MAX_SAFE_SPRITE_COUNT, sprite, MAX_SAFE_SPRITE_COUNT, {width:150, height:193.9}, scene);
+        // console.log(MAX_SAFE_SPRITE_COUNT);
+    // }
     const serverConnection = new ServerConnection(io("http://localhost:8079"));
     console.log("create new player")
     const player = new Player("player", scene, characterManager, keyboardInputManager, spriteManager, PLAYER_INITIAL_STATE);

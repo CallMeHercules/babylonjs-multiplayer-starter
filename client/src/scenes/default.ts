@@ -1,13 +1,15 @@
 import {
     Engine,
     Scene,
+    SceneLoader,
     ArcRotateCamera,
     Vector3,
     HemisphericLight,
-    GroundBuilder,
+    MeshBuilder,
     StandardMaterial,
 } from "@babylonjs/core";
 import { CreateSceneClass } from "../createScene";
+import tile from './../meshs/tile.glb';
 
 export class DefaultSceneWithTexture implements CreateSceneClass {
     createScene = async (
@@ -41,16 +43,42 @@ export class DefaultSceneWithTexture implements CreateSceneClass {
         );
 
         // Our built-in 'ground' shape.
-        const ground = GroundBuilder.CreateGround(
-            "ground",
-            { width: 10, height: 10 },
-            scene
-        );
+        const square = 5;
+        var grid = {
+            'h' : 8,
+            'w' : 8
+        };
+        // var ground =  SceneLoader.ImportMesh(
+        //     "",
+        //     "",
+        //     tile,
+        //     scene,
+        // );
+        var ground = MeshBuilder.CreateTiledGround("tiled ground", {xmin: -3, zmin: -3, xmax: 3, zmax: 3, subdivisions: grid}, scene);;
+        // for (let v = 0; v < 1; v++) {
+        //     for (let width = -square; width <= square; width++) {
+        //         for (let length = -square; length <= square; length++) {
+        //                 SceneLoader.ImportMesh("", "", tile, scene, function (newMeshes) {
+        //                 ground = newMeshes[v];
+        //                 ground.isPickable = true;
+        //                 ground.scaling.x = 0.99;
+        //                 ground.scaling.y = 0.99;
+        //                 ground.scaling.z = 0.99;
+        //                 ground.position.copyFromFloats((ground.scaling.x+1.01)*width + (square * 2), 0, ((ground.scaling.x+1.01)*length) + (square * 2));
+        //             });
+        //         }
+        //     }
+        // }
+        // var grid = {
+        //     'h' : 8,
+        //     'w' : 8
+        // };
+        // const ground = MeshBuilder.CreateTiledGround("tiled ground", {xmin: -3, zmin: -3, xmax: 3, zmax: 3, subdivisions: grid}, scene);
 
         // Load a texture to be used as the ground material
-        const groundMaterial = new StandardMaterial("ground material", scene);
+        // const groundMaterial = new StandardMaterial("ground material", scene);
 
-        ground.material = groundMaterial;
+        // ground.material = groundMaterial;
 
         return scene;
     };

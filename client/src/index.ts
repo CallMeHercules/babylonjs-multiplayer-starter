@@ -1,6 +1,6 @@
 import * as io from "socket.io-client";
 import { Engine } from "@babylonjs/core/Engines/engine";
-import { SpriteManager } from "@babylonjs/core";
+import { SpriteManager, PointerInfo, Ray } from "@babylonjs/core";
 import { getSceneModuleWithName } from "./createScene";
 import { ServerConnection } from "./ServerConnection";
 import { Game } from "./Game";
@@ -39,6 +39,15 @@ export const babylonInit = async (): Promise<void> => {
     engine.runRenderLoop(function () {
         divFps.innerHTML = engine.getFps().toFixed() + " fps";
         scene.render();
+        scene.onPointerDown = function(_pickResult,evt){
+            if (evt.pickedMesh?.uniqueId){
+                evt.hit = true;
+                keyboardInputManager.click(evt.pickedMesh)
+            }
+            if (evt.pickedSprite){
+                console.log(evt.pickedSprite)
+            }
+        }
     });
 
     // Watch for browser/canvas resize events
@@ -49,13 +58,9 @@ export const babylonInit = async (): Promise<void> => {
     const characterManager = new CharacterManager();
     const keyboardInputManager = new KeyboardInputManager(scene);
     const MAX_SAFE_SPRITE_COUNT = 100; //largest known value for SpriteManager without slowdown of fps
-     
-    // while (true) {
-        // console.log(MAX_SAFE_SPRITE_COUNT);
-        // MAX_SAFE_SPRITE_COUNT = MAX_SAFE_SPRITE_COUNT+100000;
+    
     const spriteManager = new SpriteManager("playerManager"+MAX_SAFE_SPRITE_COUNT, sprite, MAX_SAFE_SPRITE_COUNT, {width:150, height:193.9}, scene);
-        // console.log(MAX_SAFE_SPRITE_COUNT);
-    // }
+
     const serverConnection = new ServerConnection(io("http://localhost:8079"));
     console.log("create new player")
     const player = new Player("player", scene, characterManager, keyboardInputManager, spriteManager, PLAYER_INITIAL_STATE);

@@ -1,5 +1,11 @@
-import { Scene, ActionManager, ExecuteCodeAction } from "@babylonjs/core";
+import { Scene, ActionManager, ExecuteCodeAction, AbstractMesh, Vector3 } from "@babylonjs/core";
 
+var clicked = false; 
+var selectedMesh: AbstractMesh;
+var clickedMesh: AbstractMesh;
+var selected = false;
+var current = new Vector3(0,0,0)
+var moving = new Vector3(0,0,0)
 export class KeyboardInputManager {
     private readonly _actionManager: ActionManager;
     private _inputMap: { [index: string]: boolean } = {};
@@ -65,5 +71,58 @@ export class KeyboardInputManager {
 
     public keyIsDown(key: string): boolean {
         return this._inputMap[key.toLowerCase()];
+    }
+
+    public click(pickedMesh: AbstractMesh): void {
+        clicked = true;
+        moving = pickedMesh.absolutePosition;
+        try {
+            clickedMesh!.material!.wireframe=false;
+        } catch (err) {} //clicked mesh will be null first time
+        clickedMesh = pickedMesh;
+        if (moving._x == current._x && 
+            moving._z == current._y &&
+            moving._z == current._z && clicked && selected) {
+            console.log('staying put');
+            clicked = false;
+            selected = false;
+            clickedMesh!.material!.wireframe=false;
+            selectedMesh = pickedMesh;
+        } else if ( clicked && selected ){
+            console.log('moving');
+            clicked = false;
+            selected = false;
+            current = moving;
+            selectedMesh = pickedMesh;
+            selectedMesh!.material!.wireframe=false;
+        }
+        clickedMesh = pickedMesh;
+    }
+
+    public checkClick(): boolean {        
+        if (clicked) {
+            clicked = false;
+            current._isDirty = false;
+            try {
+                if (clickedMesh.absolutePosition._x == current._x 
+                    && clickedMesh.absolutePosition._y == current._y 
+                    && clickedMesh.absolutePosition._z == current._z ) {
+                    console.log('selected')
+                    clickedMesh!.material!.wireframe=true;
+                    selected = true;
+                }
+            } catch (err) {
+                return true
+            };
+            return true;
+        }
+        return false;
+    }
+
+    public checkClickDestination(): Vector3 {
+        if (clicked == true) {
+            return moving;
+        }
+        return current;
     }
 }
